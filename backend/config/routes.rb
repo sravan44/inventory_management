@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   # rails/health) so the response shape is explicit and under our control.
   get "up" => "health#show", as: :health_check
 
-  # Future routes (Milestone 2+) will be namespaced under /api/v1 and /graphql.
-  # Kept empty here on purpose — commit 0.1 ships exactly one endpoint.
+  # Tenant-scoped sanity endpoint (commit 1.4). Served on a tenant subdomain;
+  # resolves + switches schema via TenantScopedController. Real resource routes
+  # arrive under /api/v1 and /graphql in later milestones.
+  get "current_tenant" => "current_tenant#show"
 end
