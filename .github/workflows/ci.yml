@@ -1,0 +1,105 @@
+name: CI
+
+# When CI runs.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Free-plan saver: if you push again before a run finishes, cancel the older
+# run for the same branch/PR instead of paying minutes for both.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Tests — the job you asked to keep green. Spins up Postgres, sets up Ruby,
+  # prepares the test DB, runs RSpec.
+  # ---------------------------------------------------------------------------
+  backend-test:
+    name: Backend tests (RSpec)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    # A throwaway Postgres for the test run, matching our database.yml env vars.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        # Don't start the tests until Postgres actually accepts connections.
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_HOST: localhost      # the service is reachable on localhost:5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installs the Ruby from backend/.ruby-version and caches gems between runs
+      # (bundler-cache: true) — the biggest free-minute saver here.
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+
+      - name: Prepare test database
+        run: bin/rails db:prepare
+
+      - name: Run RSpec
+        run: bundle exec rspec
+
+  # ---------------------------------------------------------------------------
+  # Lint — RuboCop (style). Uses the Rails "omakase" ruleset so generated + our
+  # code passes without bikeshedding. Runs in parallel with the other jobs.
+  # ---------------------------------------------------------------------------
+  backend-lint:
+    name: Backend lint (RuboCop)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+      - name: RuboCop
+        run: bundle exec rubocop --parallel
+
+  # ---------------------------------------------------------------------------
+  # Security — static scan (Brakeman) + known-CVE gem check (bundler-audit).
+  # Fast and usually green on a clean app; catches regressions early.
+  # ---------------------------------------------------------------------------
+  backend-security:
+    name: Backend security (Brakeman, bundler-audit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          working-directory: backend
+          bundler-cache: true
+      - name: Brakeman
+        run: bundle exec brakeman --no-pager -q
+      - name: bundler-audit
+        run: |
+          bundle exec bundle-audit update
+          bundle exec bundle-audit check

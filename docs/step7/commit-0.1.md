@@ -88,9 +88,9 @@ group :development, :test do
 end
 
 group :development do
-  gem "rubocop-rails", require: false   # Ruby/Rails style linter (CI gate)
-  gem "brakeman", require: false        # static security scanner (CI gate)
-  gem "bundler-audit", require: false   # flags gems with known CVEs (CI gate)
+  gem "rubocop-rails-omakase", require: false  # Rails-team style ruleset (CI lint gate)
+  gem "brakeman", require: false               # static security scanner (CI gate)
+  gem "bundler-audit", require: false          # flags gems with known CVEs (CI gate)
 end
 ```
 

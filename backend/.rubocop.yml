@@ -1,0 +1,16 @@
+# Use the Rails-team "omakase" ruleset: a curated, low-friction style that the
+# generated Rails code already conforms to, so CI doesn't nag about quote styles
+# and other bikeshed topics. Add the gem in the Gemfile:
+#   gem "rubocop-rails-omakase", require: false
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml
+
+AllCops:
+  Exclude:
+    - "db/migrate/*"     # migrations are generated-ish; keep them out of styling
+    - "db/schema.rb"
+    - "db/structure.sql"
+    - "bin/**/*"
+    - "vendor/**/*"
+    - "tmp/**/*"
+    - "node_modules/**/*"
