@@ -1,0 +1,25 @@
+# EditorConfig — consistent whitespace across editors and both apps.
+# https://editorconfig.org  (install the plugin for your editor once)
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+# Ruby / Rails convention: 2 spaces
+[*.{rb,rake,ru}]
+indent_size = 2
+
+[Gemfile]
+indent_size = 2
+
+# JS/TS/React convention: 2 spaces
+[*.{js,jsx,ts,tsx,json,css,scss,html}]
+indent_size = 2
+
+# Markdown: don't strip trailing spaces (they can be meaningful line breaks)
+[*.md]
+trim_trailing_whitespace = false

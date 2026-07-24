@@ -1,0 +1,48 @@
+# Development environment for the whole stack.
+# Run `docker compose up` and everything (app + database) starts together.
+# No Ruby/Postgres install needed on your machine — only Docker.
+#
+# Redis and MongoDB services get ADDED to this same file later:
+#   - Redis  in Milestone 3 (rate limiting) / Milestone 5 (log buffer)
+#   - Mongo  in Milestone 5 (audit-log sink)
+# Commit 0.1 needs only the app and Postgres.
+
+name: inventory-management
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"          # expose to host so you can inspect with a GUI if wanted
+    volumes:
+      - pg_data:/var/lib/postgresql/data   # persist data across restarts
+    healthcheck:
+      # web waits until Postgres actually accepts connections, not just "started"
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: ./backend           # builds backend/Dockerfile
+    command: bin/rails server -b 0.0.0.0
+    environment:
+      DATABASE_HOST: db        # "db" = the service name above; Docker's DNS resolves it
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      RAILS_ENV: development
+    ports:
+      - "3000:3000"            # http://localhost:3000
+    volumes:
+      - ./backend:/app         # live-mount source -> code edits reload without rebuild
+      - bundle:/usr/local/bundle  # cache installed gems in a named volume
+    depends_on:
+      db:
+        condition: service_healthy   # don't start web until db passes its healthcheck
+
+volumes:
+  pg_data:
+  bundle:

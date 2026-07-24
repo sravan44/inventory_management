@@ -1,0 +1,30 @@
+# Database config that works BOTH in Docker and (optionally) locally, by
+# reading connection details from environment variables. In Docker these are
+# set by docker-compose (DATABASE_HOST=db, etc.); locally they fall back to
+# sensible defaults.
+#
+# Schema-per-tenant note (ADR-0002): Apartment will switch the Postgres
+# search_path per request in later milestones. This base config just points at
+# the server; the tenancy layer is added in Milestone 1.
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= ENV.fetch("DATABASE_HOST", "localhost") %>
+  username: <%= ENV.fetch("DATABASE_USER", "postgres") %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD", "postgres") %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS", 5) %>
+
+development:
+  <<: *default
+  database: inventory_development
+
+test:
+  <<: *default
+  database: inventory_test
+
+production:
+  <<: *default
+  # In production, prefer a single DATABASE_URL secret over individual vars.
+  url: <%= ENV.fetch("DATABASE_URL", nil) %>
+  database: <%= ENV.fetch("DATABASE_NAME", "inventory_production") %>

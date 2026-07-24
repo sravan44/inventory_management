@@ -1,0 +1,35 @@
+# === Secrets / environment ===
+.env
+.env.*
+!.env.example
+backend/config/master.key
+backend/config/credentials/*.key
+
+# === Ruby / Rails (backend/) ===
+backend/tmp/
+backend/log/
+*.log
+backend/storage/
+backend/public/assets/
+backend/.byebug_history
+backend/coverage/
+# Bundler: keep Gemfile.lock (committed for reproducibility); ignore installed gems
+backend/vendor/bundle/
+backend/.bundle/
+
+# === Node / React (frontend/, added in Milestone 6) ===
+node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-error.log*
+
+# === Docker ===
+# (compose volumes live in Docker, not the tree — nothing to ignore here)
+
+# === OS / editor cruft ===
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

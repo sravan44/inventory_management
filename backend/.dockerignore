@@ -1,0 +1,8 @@
+# Keep the build context small and avoid copying host-only / secret files.
+.git
+.gitignore
+tmp/
+log/
+node_modules/
+.env
+*.log
