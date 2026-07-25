@@ -1,6 +1,22 @@
 require_relative "boot"
 
-require "rails/all"
+# Require ONLY the frameworks we use — not `rails/all`. This deliberately omits
+# Active Storage, Action Mailbox, Action Text, and Action Cable: we don't use
+# them, and loading them would (a) require a config/storage.yml and (b) trip an
+# eager-load path conflict in CI. Add one back the day we actually need it.
+require "rails"
+
+require "active_model/railtie"
+require "active_job/railtie"
+require "active_record/railtie"
+require "action_controller/railtie"
+require "action_mailer/railtie"   # transactional email (ADR-0011)
+require "action_view/railtie"     # mailer templates
+# require "active_storage/engine"
+# require "action_mailbox/engine"
+# require "action_text/engine"
+# require "action_cable/engine"
+# require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems limited to :test,
 # :development, or :production.

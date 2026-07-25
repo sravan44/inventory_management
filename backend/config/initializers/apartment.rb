@@ -15,6 +15,15 @@ Apartment.configure do |config|
   # per tenant instead. Schemas keep everything in one instance/one database.
   config.use_schemas = true
 
+  # We dump the schema as SQL (config.active_record.schema_format = :sql in
+  # application.rb), not Ruby. Without this, ros-apartment ignores that and
+  # always tries to `load` db/schema.rb to build new tenant schemas — a file
+  # that never gets created under schema_format = :sql, so every tenant
+  # creation raises Apartment::FileNotFound. `use_sql = true` switches to the
+  # adapter that clones the `public` schema directly (via pg_dump), matching
+  # our SQL schema format.
+  config.use_sql = true
+
   # Models that live ONCE in the shared `public` schema instead of being copied
   # into every tenant schema. These are the global identity models (a user can
   # belong to many tenants — ADR-0006). Empty for now; each entry is added in

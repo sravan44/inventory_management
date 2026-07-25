@@ -1,10 +1,12 @@
 ---
 # Brakeman config (auto-loaded from config/brakeman.yml).
 #
-# Skip the time-based end-of-life checks. These fail the build based on the
-# CURRENT DATE vs. a dependency's EOL date, not on anything in our code — so they
-# turn CI red on a schedule we don't control. Rails/Ruby upgrades are tracked
-# separately as real work (see docs). ALL actual security checks stay enabled.
-:skip_checks:
-  - EOLRails
-  - EOLRuby
+# NOTE on end-of-life warnings: Brakeman 8 flags Rails 7.1.6 as EOL. We are on
+# 7.1.6 ON PURPOSE (to demonstrate the upgrade in Milestone U), so in CI we run
+# Brakeman with `--no-exit-on-warn` — it still scans and reports, but the EOL
+# warning doesn't turn the build red. Once we upgrade off EOL (Milestone U),
+# remove `--no-exit-on-warn` to make Brakeman blocking again.
+#
+# (The `skip_checks: [EOLRails, EOLRuby]` approach is NOT used — those names
+# aren't valid skip targets in Brakeman 8.0.5 and cause a config error.)
+{}

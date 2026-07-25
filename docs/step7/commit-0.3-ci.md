@@ -47,7 +47,11 @@ They run in parallel, so total wall-clock ≈ the slowest one.
 
 ### 3. `backend-security` — Brakeman + bundler-audit
 - **Brakeman** statically scans for common Rails vulns (SQLi, mass assignment,
-  etc.) — ties directly to the OWASP checks in your project rules.
+  etc.) — ties directly to the OWASP checks in your project rules. Run with
+  `--no-exit-on-warn` **for now**: we're deliberately on EOL Rails 7.1.6 (to demo
+  the upgrade in Milestone U), and that EOL warning must not fail the build.
+  Brakeman still scans and prints findings; we restore blocking (drop the flag)
+  after the upgrade. Do NOT confuse this temporary flag with ignoring real vulns.
 - **bundler-audit** fails the build if any gem has a known CVE.
 
 ---

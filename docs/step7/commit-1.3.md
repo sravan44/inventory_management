@@ -80,11 +80,24 @@ console call share identical behavior (DRY).
 - `spec/services/identity/tenant_provisioning_service_spec.rb` — an **integration**
   spec: it creates a real schema in the test database, asserts the schema exists
   in `information_schema.schemata`, that the tenant becomes `active`, and that
-  calling twice doesn't raise (idempotency). An `after` block drops the schema so
-  tests don't leak state.
+  calling twice doesn't raise (idempotency). It **disables transactional fixtures**
+  (`self.use_transactional_tests = false`) and cleans up manually in an `after`
+  block (drop the schema, destroy the tenant).
+
+  **Why transactional fixtures had to go here** (a real ros-apartment gotcha worth
+  knowing): by default each example runs inside one transaction that RSpec rolls
+  back at the end. But when `Apartment::Tenant.create` is called against a schema
+  that already exists (the idempotency case), ros-apartment issues a **raw
+  `ROLLBACK;`** internally instead of releasing a savepoint. That raw rollback
+  unwinds the *entire* example's transaction — including the `tenant` row created
+  in the spec — so the subsequent `tenant.reload` fails with `RecordNotFound`.
+  Turning transactional fixtures off (and cleaning up by hand) sidesteps it. This
+  is the concrete case the note in `spec/rails_helper.rb` warns about.
+
 - `spec/jobs/identity/provision_tenant_job_spec.rb` — uses `ActiveJob::TestHelper`
   to `perform_enqueued_jobs` and asserts the tenant ends up active, plus that the
-  job enqueues on the `default` queue.
+  job enqueues on the `default` queue. It provisions the schema only **once**, so
+  it never hits the raw-rollback path above and keeps transactional fixtures.
 
 ```bash
 docker compose exec web bundle exec rspec spec/services spec/jobs
