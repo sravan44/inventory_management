@@ -12,6 +12,10 @@ module Identity
     # a max length (72 bytes, the bcrypt limit). Requires the `bcrypt` gem.
     has_secure_password
 
+    # One user, many tenants (ADR-0006), via memberships.
+    has_many :memberships, class_name: "Identity::Membership", dependent: :destroy
+    has_many :tenants, through: :memberships, source: :tenant
+
     enum :status, { active: 0, invited: 1, suspended: 2 }, default: :active
 
     before_validation :normalize_email

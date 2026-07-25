@@ -21,6 +21,10 @@ module Identity
     # trailing hyphen. Max length enforced separately (63 = DNS label limit).
     SUBDOMAIN_FORMAT = /\A[a-z0-9]([a-z0-9-]*[a-z0-9])?\z/
 
+    # Members of this tenant (ADR-0006), via memberships.
+    has_many :memberships, class_name: "Identity::Membership", dependent: :destroy
+    has_many :users, through: :memberships, source: :user
+
     enum :status,
          { pending_provisioning: 0, active: 1, suspended: 2 },
          default: :pending_provisioning
