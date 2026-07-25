@@ -116,6 +116,21 @@ docker compose exec web rails console
 
 ---
 
+## Gotcha: extensions and tenant provisioning (found in CI)
+
+Provisioning clones the public structure into the new tenant schema, **rewriting
+the schema name** `public` → `tenant_x`. If a Postgres extension type (like
+`citext`, used by `users.email`) lives in `public`, that rewrite turns
+`public.citext` into `tenant_x.citext` — which doesn't exist — and provisioning
+fails with `type "tenant_x.citext" does not exist`. It can pass locally (dev may
+provision by re-running migrations) yet fail in CI (which clones via SQL dump).
+
+Fix: install extensions in a dedicated **`shared_extensions`** schema
+(`SetupSharedExtensions` migration) and keep it in every tenant's search_path via
+Apartment `config.persistent_schemas = ["shared_extensions"]` + a
+`schema_search_path` in `database.yml`. Apartment never rewrites that schema, so
+the type reference stays valid.
+
 ## What this commit does and doesn't do
 
 Does: create the Postgres schema for a tenant, idempotently, off the request

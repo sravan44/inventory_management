@@ -3,11 +3,11 @@
 # so it must live in `public` and be Apartment-excluded, not duplicated per tenant.
 class CreateUsers < ActiveRecord::Migration[7.1]
   def change
-    # citext = case-insensitive text. Storing email as citext makes uniqueness
-    # and lookups case-insensitive AT THE DATABASE LEVEL, so "A@B.com" and
-    # "a@b.com" are the same value without any LOWER() gymnastics in queries.
-    enable_extension "citext" unless extension_enabled?("citext")
-
+    # citext = case-insensitive text. The extension is installed in the
+    # `shared_extensions` schema by an earlier migration (SetupSharedExtensions),
+    # NOT here — see that migration for why (Apartment schema-rewrite safety).
+    # `t.citext` below resolves because shared_extensions is always in the
+    # search_path (Apartment persistent_schemas + database.yml).
     create_table :users do |t|
       t.citext   :email,           null: false
       t.string   :password_digest, null: false          # bcrypt hash (never the raw password)

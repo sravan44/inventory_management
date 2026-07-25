@@ -30,12 +30,19 @@ recoverable in any practical time.
 `db/migrate/20260724000002_create_users.rb`. Creates `users` in **public** (global
 identity). Two things worth understanding:
 
-- **`enable_extension "citext"`** — turns on Postgres' case-insensitive text type.
 - **`t.citext :email`** — storing email as citext means "A@B.com" and "a@b.com"
   compare equal *at the database level*. So the unique index below is inherently
   case-insensitive — no `LOWER(email)` in every query, no separate functional
   index. This is a Postgres feature MySQL lacks cleanly (part of why we stayed on
   Postgres).
+- **Where citext lives — `shared_extensions`, not `public`.** The extension is
+  installed by an earlier migration (`SetupSharedExtensions`) into a dedicated
+  `shared_extensions` schema, which Apartment keeps in every tenant's search_path
+  (`persistent_schemas`). Reason: when Apartment provisions a tenant it clones the
+  public structure and rewrites `public` → `tenant_x`; if citext lived in `public`
+  the type reference would be rewritten to a non-existent `tenant_x.citext` and
+  provisioning would fail (`type "tenant_x.citext" does not exist`). This bit us in
+  CI — see the note in `commit-1.3.md`.
 
 Run it:
 ```bash

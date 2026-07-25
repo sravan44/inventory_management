@@ -9,12 +9,11 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 
 require "rspec/rails"
 
-# Keep the test schema in sync with migrations (loads structure.sql).
-begin
-  ActiveRecord::Migration.maintain_test_schema!
-rescue ActiveRecord::PendingMigrationError => e
-  abort e.to_s.strip
-end
+# NOTE: we do NOT call `maintain_test_schema!` here. The test database is built by
+# running migrations explicitly (locally and in CI) rather than loading a
+# structure.sql — which keeps psql off the CI runner and avoids stale-dump issues
+# with Apartment's per-tenant schemas. `config.active_record.maintain_test_schema`
+# is set to false in config/environments/test.rb.
 
 RSpec.configure do |config|
   config.fixture_paths = [ Rails.root.join("spec/fixtures").to_s ]

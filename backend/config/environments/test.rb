@@ -29,6 +29,13 @@ Rails.application.configure do
   # running migrations directly.
   config.active_record.dump_schema_after_migration = false
 
+  # Build the test DB by running migrations (see CI), NOT by loading a
+  # structure.sql. This avoids needing psql on the runner and avoids stale-dump
+  # problems with Apartment's per-tenant schemas. We migrate the test DB
+  # explicitly, so disable the auto schema-maintenance that would try to load
+  # structure.sql.
+  config.active_record.maintain_test_schema = false
+
   # Allow arbitrary Host headers so subdomain request specs work (commit 1.4).
   config.hosts.clear
 

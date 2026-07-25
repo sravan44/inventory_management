@@ -15,6 +15,13 @@ Apartment.configure do |config|
   # per tenant instead. Schemas keep everything in one instance/one database.
   config.use_schemas = true
 
+  # Schemas ALWAYS kept in the search_path — for the default connection AND every
+  # tenant. We keep Postgres extensions (citext, ...) in `shared_extensions` so
+  # their types resolve inside tenant schemas and, crucially, are NOT rewritten
+  # when Apartment clones public -> tenant during provisioning. Without this,
+  # provisioning fails with `type "tenant_x.citext" does not exist`.
+  config.persistent_schemas = [ "shared_extensions" ]
+
   # We dump the schema as SQL (config.active_record.schema_format = :sql in
   # application.rb), not Ruby. Without this, ros-apartment ignores that and
   # always tries to `load` db/schema.rb to build new tenant schemas — a file
