@@ -9,6 +9,13 @@ RSpec.describe "Tenant resolution", type: :request do
     Identity::Tenant.create!(name: "Acme", subdomain: "acme", status: :active)
   end
 
+  # This spec exercises the RESOLUTION logic (subdomain -> tenant, 404/403), not
+  # Apartment's schema machinery (covered by the provisioning specs). Stub the
+  # switch to a no-op so we don't need a real Postgres schema to exist here.
+  before do
+    allow(Apartment::Tenant).to receive(:switch).and_yield
+  end
+
   def host_for(subdomain)
     "#{subdomain}.example.com"
   end

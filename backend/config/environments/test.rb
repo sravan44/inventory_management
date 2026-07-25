@@ -24,6 +24,11 @@ Rails.application.configure do
 
   config.active_record.migration_error = :page_load
 
+  # Don't shell out to pg_dump after migrating in CI (avoids a pg_dump
+  # dependency/version-mismatch on the runner); the test schema is built by
+  # running migrations directly.
+  config.active_record.dump_schema_after_migration = false
+
   # Allow arbitrary Host headers so subdomain request specs work (commit 1.4).
   config.hosts.clear
 

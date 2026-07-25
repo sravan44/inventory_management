@@ -1,0 +1,10 @@
+---
+# Brakeman config (auto-loaded from config/brakeman.yml).
+#
+# Skip the time-based end-of-life checks. These fail the build based on the
+# CURRENT DATE vs. a dependency's EOL date, not on anything in our code — so they
+# turn CI red on a schedule we don't control. Rails/Ruby upgrades are tracked
+# separately as real work (see docs). ALL actual security checks stay enabled.
+:skip_checks:
+  - EOLRails
+  - EOLRuby

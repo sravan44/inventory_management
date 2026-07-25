@@ -25,7 +25,7 @@ Apartment.configure do |config|
   config.excluded_models = [
     "Identity::Tenant",       # added commit 1.2
     "Identity::User",         # added commit 2.1
-    "Identity::Membership",   # added commit 2.2
+    "Identity::Membership"    # added commit 2.2
     # "Identity::RefreshToken", # Milestone 2
     # "Identity::ApiKey",     # Milestone 3
   ]
@@ -43,9 +43,10 @@ Apartment.configure do |config|
     end
   end
 
-  # Schema used when no tenant is active (the shared/global context, e.g. the
-  # apex host handling login before any tenant is chosen).
-  config.default_schema = "public"
+  # Tenant used when none is active (the shared/global context, e.g. the apex
+  # host handling login before any tenant is chosen). NOTE: ros-apartment 3.4+
+  # renamed this from `default_schema` to `default_tenant`.
+  config.default_tenant = "public"
 end
 
 # The subdomain "elevator" auto-switches the active schema based on the request

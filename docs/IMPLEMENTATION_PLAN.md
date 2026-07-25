@@ -109,6 +109,23 @@ Ship 6.x → usable end-to-end product.
 
 ---
 
+## Milestone U — Framework upgrade demonstrations (deliberate)
+
+We intentionally start on **Rails 7.1.6** and **React 16**, then upgrade later as
+worked examples — the upgrade *process* is itself a deliverable to demonstrate.
+
+- **U.1 — Rails upgrade** (7.1 → 7.2 → 8.0): bump one minor at a time; run the
+  `rails app:update` diff, reconcile `new_framework_defaults`, verify
+  `ros-apartment` compatibility at each step, keep CI green between bumps. Removes
+  the Brakeman EOL skip once on a supported line.
+- **U.2 — React upgrade** (16 → 18): adopt the new `createRoot` API, review
+  concurrent-rendering/StrictMode double-invoke effects, update testing-library
+  and any class-lifecycle usages.
+
+Until then, the Brakeman `EOLRails`/`EOLRuby` checks are skipped
+(`config/brakeman.yml`) so CI isn't red on a date-based signal we're addressing on
+purpose in this milestone.
+
 ## Cross-milestone notes
 
 - **Feature flags:** inventory + frontend verticals flagged until their milestone's final commit; lets partial work merge to `main` safely.

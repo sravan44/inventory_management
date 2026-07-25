@@ -13,7 +13,7 @@ Rails.application.configure do
   config.assume_ssl = true
 
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
-  config.log_tags = [:request_id]
+  config.log_tags = [ :request_id ]
   config.logger = ActiveSupport::TaggedLogging.new(Logger.new($stdout)) if ENV["RAILS_LOG_TO_STDOUT"].present?
 
   config.active_support.report_deprecations = false

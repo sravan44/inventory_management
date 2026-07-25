@@ -36,7 +36,7 @@ module Identity
     end
 
     def full_name
-      [first_name, last_name].compact_blank.join(" ")
+      [ first_name, last_name ].compact_blank.join(" ")
     end
 
     private

@@ -17,7 +17,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec.configure do |config|
-  config.fixture_paths = [Rails.root.join("spec/fixtures").to_s]
+  config.fixture_paths = [ Rails.root.join("spec/fixtures").to_s ]
 
   # Wrap each example in a transaction that rolls back at the end (fast, clean).
   # NOTE: specs that create/drop Postgres SCHEMAS via Apartment (tenant
