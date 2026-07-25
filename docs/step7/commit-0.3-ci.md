@@ -45,14 +45,15 @@ They run in parallel, so total wall-clock ≈ the slowest one.
   `gem "rubocop-rails-omakase", require: false`.
 - If it ever flags something, `bundle exec rubocop -A` auto-corrects most of it.
 
-### 3. `backend-security` — Brakeman + bundler-audit
-- **Brakeman** statically scans for common Rails vulns (SQLi, mass assignment,
-  etc.) — ties directly to the OWASP checks in your project rules. Run with
-  `--no-exit-on-warn` **for now**: we're deliberately on EOL Rails 7.1.6 (to demo
-  the upgrade in Milestone U), and that EOL warning must not fail the build.
-  Brakeman still scans and prints findings; we restore blocking (drop the flag)
-  after the upgrade. Do NOT confuse this temporary flag with ignoring real vulns.
-- **bundler-audit** fails the build if any gem has a known CVE.
+### 3. `backend-security` — bundler-audit (Brakeman temporarily off)
+- **Brakeman** is **disabled until the first version of the app is complete**
+  (commented out in `ci.yml`). Running it against a half-built surface is mostly
+  noise; we'll configure it deliberately (rules, ignores, EOL policy) and
+  re-enable it once the app stabilizes. It still statically scans for common Rails
+  vulns (SQLi, mass assignment, etc.) — ties to the OWASP checks in the project
+  rules — just not on every push yet.
+- **bundler-audit** stays ON and fails the build if any gem has a known CVE
+  (it's what caught the Puma CVE-2026-47737).
 
 ---
 

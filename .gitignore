@@ -11,6 +11,8 @@ backend/log/
 *.log
 backend/storage/
 backend/public/assets/
+# We build DBs from migrations, not a committed SQL dump (Apartment + no psql in CI)
+backend/db/structure.sql
 backend/.byebug_history
 backend/coverage/
 # Bundler: keep Gemfile.lock (committed for reproducibility); ignore installed gems

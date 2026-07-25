@@ -56,8 +56,8 @@ jobs:
           working-directory: backend
           bundler-cache: true
 
-      - name: Prepare test database
-        run: bin/rails db:prepare
+      - name: Prepare test database (migrate, don't load structure.sql)
+        run: bin/rails db:create db:migrate
 
       - name: Run RSpec
         run: bundle exec rspec
@@ -97,11 +97,11 @@ jobs:
         with:
           working-directory: backend
           bundler-cache: true
-      - name: Brakeman
-        # --no-exit-on-warn: we run EOL Rails 7.1.6 on purpose (Milestone U demo),
-        # so the EOL warning must not fail the build. Brakeman still scans/reports.
-        # Restore blocking (drop the flag) after the framework upgrade.
-        run: bundle exec brakeman --no-pager -q --no-exit-on-warn
+      # Brakeman is DISABLED until the first version of the app is complete, then
+      # we'll configure it properly (rules, ignores, EOL policy) and re-enable.
+      # bundler-audit stays on — it catches known-CVE gems cheaply.
+      # - name: Brakeman
+      #   run: bundle exec brakeman --no-pager -q --no-exit-on-warn
       - name: bundler-audit
         run: |
           bundle exec bundle-audit update

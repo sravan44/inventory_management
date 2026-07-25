@@ -5,7 +5,7 @@ ruby "3.3.5"
 # --- Core framework ---
 gem "rails", "~> 7.1.5"
 gem "pg", "~> 1.5"              # PostgreSQL driver
-gem "puma", "~> 6.4"           # app server
+gem "puma", "~> 7.2", ">= 7.2.1"  # app server (>= 7.2.1 fixes CVE-2026-47737)
 gem "bootsnap", ">= 1.4.4", require: false  # faster boot via caching
 
 # --- Auth ---
