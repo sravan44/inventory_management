@@ -41,8 +41,8 @@ Apartment.configure do |config|
   config.excluded_models = [
     "Identity::Tenant",       # added commit 1.2
     "Identity::User",         # added commit 2.1
-    "Identity::Membership"    # added commit 2.2
-    # "Identity::RefreshToken", # Milestone 2
+    "Identity::Membership",   # added commit 2.2
+    "Identity::RefreshToken"  # added commit 2.3
     # "Identity::ApiKey",     # Milestone 3
   ]
 

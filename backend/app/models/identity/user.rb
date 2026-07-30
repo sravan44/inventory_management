@@ -16,6 +16,10 @@ module Identity
     has_many :memberships, class_name: "Identity::Membership", dependent: :destroy
     has_many :tenants, through: :memberships, source: :tenant
 
+    # Refresh tokens for this user (ADR-0005). `dependent: :destroy` so removing a
+    # user cleans up their tokens; "log out everywhere" revokes them in bulk.
+    has_many :refresh_tokens, class_name: "Identity::RefreshToken", dependent: :destroy
+
     enum :status, { active: 0, invited: 1, suspended: 2 }, default: :active
 
     before_validation :normalize_email
