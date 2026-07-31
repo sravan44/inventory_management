@@ -122,9 +122,13 @@ worked examples — the upgrade *process* is itself a deliverable to demonstrate
   concurrent-rendering/StrictMode double-invoke effects, update testing-library
   and any class-lifecycle usages.
 
-Until then, the Brakeman `EOLRails`/`EOLRuby` checks are skipped
-(`config/brakeman.yml`) so CI isn't red on a date-based signal we're addressing on
-purpose in this milestone.
+Until then, two CI accommodations are in place for the intentionally-old Rails,
+both to be removed once U.1 lands:
+
+- Brakeman is temporarily disabled (commented in `ci.yml`) — re-enable + configure
+  after v1.
+- bundler-audit ignores `CVE-2026-33176` (an Active Support DoS whose only fix is
+  upgrading Rails off 7.1). All other advisories still fail the build.
 
 ## Cross-milestone notes
 

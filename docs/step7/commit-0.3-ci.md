@@ -45,15 +45,16 @@ They run in parallel, so total wall-clock ≈ the slowest one.
   `gem "rubocop-rails-omakase", require: false`.
 - If it ever flags something, `bundle exec rubocop -A` auto-corrects most of it.
 
-### 3. `backend-security` — bundler-audit (Brakeman temporarily off)
-- **Brakeman** is **disabled until the first version of the app is complete**
-  (commented out in `ci.yml`). Running it against a half-built surface is mostly
-  noise; we'll configure it deliberately (rules, ignores, EOL policy) and
-  re-enable it once the app stabilizes. It still statically scans for common Rails
-  vulns (SQLi, mass assignment, etc.) — ties to the OWASP checks in the project
-  rules — just not on every push yet.
-- **bundler-audit** stays ON and fails the build if any gem has a known CVE
-  (it's what caught the Puma CVE-2026-47737).
+### 3. `backend-security` — TEMPORARILY DISABLED (`if: false`)
+The whole security job is off until v1 is complete, because we're intentionally on
+EOL Rails 7.1 (Milestone U upgrade demo), which emits advisories we can't fix
+without upgrading. Re-enable by removing `if: false` in `ci.yml`.
+- **Brakeman** — will be configured (rules, ignores, EOL policy) and re-enabled
+  after v1. Static scan for common Rails vulns (SQLi, mass assignment, …).
+- **bundler-audit** — known-CVE gem check; it's what caught the Puma
+  CVE-2026-47737 (which we fixed). When re-enabled it ignores only the deferred
+  Rails advisory `CVE-2026-33176`.
+Note: tests + lint still gate every push, so this isn't "no CI".
 
 ---
 
