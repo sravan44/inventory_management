@@ -8,7 +8,19 @@ Rails.application.routes.draw do
   get "up" => "health#show", as: :health_check
 
   # Tenant-scoped sanity endpoint (commit 1.4). Served on a tenant subdomain;
-  # resolves + switches schema via TenantScopedController. Real resource routes
-  # arrive under /api/v1 and /graphql in later milestones.
+  # resolves + switches schema via TenantScopedController.
   get "current_tenant" => "current_tenant#show"
+
+  # Global (apex-host) API. Auth precedes any tenant context (commit 2.5).
+  namespace :api do
+    namespace :v1 do
+      post "auth/register",   to: "auth#register"
+      post "auth/login",      to: "auth#login"
+      post "auth/refresh",    to: "auth#refresh"
+      post "auth/logout",     to: "auth#logout"
+      post "auth/logout_all", to: "auth#logout_all"
+      get  "me",              to: "me#show"
+    end
+  end
 end
+

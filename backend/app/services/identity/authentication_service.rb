@@ -48,12 +48,13 @@ module Identity
       user.refresh_tokens.where(revoked_at: nil).find_each(&:revoke!)
     end
 
+    # Issue a fresh access + refresh pair for an already-authenticated user
+    # (used by login, refresh, and registration auto-login).
     def self.issue_for(user)
       _record, raw_refresh = Identity::RefreshToken.issue(user)
       access = Identity::JwtCodec.encode({ sub: user.id.to_s })
       Result.new(user: user, access_token: access, refresh_token: raw_refresh)
     end
-    private_class_method :issue_for
 
     # If the presented (non-active) token matches a KNOWN revoked token, treat it
     # as reuse of a rotated token — likely stolen — and revoke everything the

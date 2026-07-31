@@ -12,4 +12,5 @@
 # Milestone 2.
 class Current < ActiveSupport::CurrentAttributes
   attribute :tenant
+  attribute :user
 end
