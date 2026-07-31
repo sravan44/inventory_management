@@ -19,9 +19,8 @@ module TenantMembership
     )
 
     if membership.nil?
-      return render json: {
-        error: { code: "no_membership", message: "You don't have access to this tenant." }
-      }, status: :forbidden
+      # render_error comes from ErrorResponses (Api::V1::BaseController).
+      return render_error(:forbidden, "no_membership", "You don't have access to this tenant.")
     end
 
     Current.membership = membership

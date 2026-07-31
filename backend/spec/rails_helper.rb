@@ -34,4 +34,8 @@ RSpec.configure do |config|
 
   # Trim Rails internals from failure backtraces.
   config.filter_rails_from_backtrace!
+
+  # FactoryBot: expose build / build_stubbed / create without the FactoryBot
+  # prefix. Prefer build_stubbed (no DB) > build (unsaved) > create (persisted).
+  config.include FactoryBot::Syntax::Methods
 end

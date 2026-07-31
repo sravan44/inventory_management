@@ -45,6 +45,10 @@ module TenantResolution
   end
 
   def render_tenant_error(status, code, message)
-    render json: { error: { code: code, message: message } }, status: status
+    # Self-contained (this concern is also used by the non-API demonstrator, which
+    # doesn't include ErrorResponses). Same envelope shape, incl. request_id.
+    render json: {
+      error: { code: code, message: message, request_id: request.request_id }
+    }, status: status
   end
 end

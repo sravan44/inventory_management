@@ -2,25 +2,15 @@
 
 module Api
   module V1
-    # Base for all /api/v1 controllers. Holds cross-cutting concerns shared by the
-    # auth endpoints now; the full standard error envelope + tenant/authorization
-    # wiring expands here in Milestone 3 (commit 3.1).
+    # Base for all /api/v1 controllers.
+    #
+    # Versioning (API_DESIGN.md): the version lives in the URL (`/api/v1`).
+    # Additive changes stay in v1; a breaking change introduces `/api/v2` with a
+    # published sunset window — the two run side by side during deprecation.
     class BaseController < ApplicationController
+      include ErrorResponses          # the standard error envelope + exception mapping
       include Authenticatable
       include Pundit::Authorization
-
-      rescue_from ActionController::ParameterMissing do |error|
-        render json: {
-          error: { code: "parameter_missing", message: error.message }
-        }, status: :bad_request
-      end
-
-      # A policy said no -> 403 with a stable code.
-      rescue_from Pundit::NotAuthorizedError do
-        render json: {
-          error: { code: "forbidden", message: "You are not allowed to perform this action." }
-        }, status: :forbidden
-      end
 
       private
 

@@ -37,6 +37,8 @@ Multi-tenant SaaS covering the full supply chain: stock tracking, purchasing, sa
 | 9 | Dual API: GraphQL (first-party) + REST (third-party) | [ADR-0009](adr/0009-dual-api-graphql-and-rest.md) |
 | 10 | Per-tenant API keys for third-party REST | [ADR-0010](adr/0010-third-party-api-key-auth.md) |
 | 11 | App layers (service/worker/serializer/decorator) + mailer + admin | [ADR-0011](adr/0011-application-layers-and-tooling.md) |
+| 12 | API docs via rswag (OpenAPI) → Swagger UI + Postman | [ADR-0012](adr/0012-api-docs-via-rswag-openapi.md) |
+| 13 | Dev/test performance strategy (tiered) | [ADR-0013](adr/0013-dev-test-performance-strategy.md) |
 
 Detailed schema: [DATABASE.md](DATABASE.md). API contract: [API_DESIGN.md](API_DESIGN.md). Build sequence: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). App-layer patterns: [PATTERNS.md](PATTERNS.md).
 

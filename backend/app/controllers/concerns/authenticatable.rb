@@ -30,8 +30,7 @@ module Authenticatable
 
   def render_unauthorized
     response.set_header("WWW-Authenticate", 'Bearer error="invalid_token"')
-    render json: {
-      error: { code: "unauthorized", message: "Invalid or missing access token." }
-    }, status: :unauthorized
+    # render_error comes from ErrorResponses (included in Api::V1::BaseController).
+    render_error(:unauthorized, "unauthorized", "Invalid or missing access token.")
   end
 end

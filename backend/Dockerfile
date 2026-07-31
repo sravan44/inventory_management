@@ -33,6 +33,11 @@ RUN apt-get update -qq && \
 
 WORKDIR /app
 
+# Speed up `bundle install`: install gems in parallel and retry transient network
+# failures. (Docker still only re-runs the layer below when the Gemfile changes.)
+ENV BUNDLE_JOBS=4 \
+    BUNDLE_RETRY=3
+
 # Install gems FIRST, before copying the app code.
 # Docker caches this layer and only re-runs `bundle install` when the Gemfile
 # (or lock) changes — so editing app code doesn't reinstall every gem.

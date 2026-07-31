@@ -112,6 +112,11 @@ GEM
     drb (2.2.3)
     erb (6.0.6)
     erubi (1.13.1)
+    factory_bot (6.6.0)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.5.1)
+      factory_bot (~> 6.5)
+      railties (>= 6.1.0)
     globalid (1.4.0)
       activesupport (>= 6.1)
     i18n (1.15.2)
@@ -344,6 +349,7 @@ DEPENDENCIES
   bundler-audit
   debug
   dotenv-rails
+  factory_bot_rails (~> 6.4)
   jwt (~> 2.8)
   pg (~> 1.5)
   puma (~> 7.2, >= 7.2.1)

@@ -34,6 +34,7 @@ group :development, :test do
   gem "dotenv-rails"           # load .env in dev/test
   gem "debug", platforms: %i[mri], require: "debug/prelude"
   gem "rswag-specs", "~> 2.13" # request-spec DSL that emits OpenAPI (ADR-0012)
+  gem "factory_bot_rails", "~> 6.4" # test data factories (prefer build_stubbed; ADR-0013)
 end
 
 group :development do

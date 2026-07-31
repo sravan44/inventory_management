@@ -4,8 +4,8 @@ require "rails_helper"
 # authentication (JWT) + membership gate. Apartment's schema switch is stubbed —
 # we're testing the gate, not the schema machinery (covered by provisioning specs).
 RSpec.describe "Api::V1::Context", type: :request do
-  let!(:tenant) { Identity::Tenant.create!(name: "Acme", subdomain: "acme", status: :active) }
-  let(:user)    { Identity::User.create!(email: "sam@acme.io", password: "hunter2pw") }
+  let!(:tenant) { create(:tenant, subdomain: "acme", status: :active) }
+  let(:user)    { create(:user) }
 
   before { allow(Apartment::Tenant).to receive(:switch).and_yield }
 
@@ -17,7 +17,7 @@ RSpec.describe "Api::V1::Context", type: :request do
   end
 
   it "returns context for an active member" do
-    Identity::Membership.create!(user: user, tenant: tenant, role: :admin, status: :active)
+    create(:membership, user: user, tenant: tenant, role: :admin, status: :active)
 
     get "/api/v1/context", headers: headers_for
 
@@ -35,7 +35,7 @@ RSpec.describe "Api::V1::Context", type: :request do
   end
 
   it "403s when the membership exists but is not active" do
-    Identity::Membership.create!(user: user, tenant: tenant, role: :staff, status: :invited)
+    create(:membership, user: user, tenant: tenant, role: :staff, status: :invited)
 
     get "/api/v1/context", headers: headers_for
 

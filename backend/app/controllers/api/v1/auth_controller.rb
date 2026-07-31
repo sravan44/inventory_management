@@ -15,13 +15,8 @@ module Api
           render json: token_payload(Identity::AuthenticationService.issue_for(user)),
                  status: :created
         else
-          render json: {
-            error: {
-              code: "validation_failed",
-              message: "Registration failed.",
-              details: user.errors.map { |e| { field: e.attribute, issue: e.message } }
-            }
-          }, status: :unprocessable_entity
+          render_error(:unprocessable_entity, "validation_failed",
+                       "Registration failed.", details: errors_from(user))
         end
       end
 
@@ -33,9 +28,7 @@ module Api
         )
         render json: token_payload(result), status: :ok
       rescue Identity::AuthenticationService::InvalidCredentials
-        render json: {
-          error: { code: "invalid_credentials", message: "Invalid email or password." }
-        }, status: :unauthorized
+        render_error(:unauthorized, "invalid_credentials", "Invalid email or password.")
       end
 
       # POST /api/v1/auth/refresh
@@ -43,9 +36,7 @@ module Api
         result = Identity::AuthenticationService.refresh(refresh_token_param)
         render json: token_payload(result), status: :ok
       rescue Identity::AuthenticationService::InvalidRefreshToken
-        render json: {
-          error: { code: "invalid_refresh_token", message: "Refresh token is invalid or expired." }
-        }, status: :unauthorized
+        render_error(:unauthorized, "invalid_refresh_token", "Refresh token is invalid or expired.")
       end
 
       # POST /api/v1/auth/logout — revoke this refresh token (idempotent).
