@@ -1,101 +1,157 @@
-require "rails_helper"
+require "swagger_helper"
 
-RSpec.describe "Api::V1::Auth", type: :request do
-  describe "POST /api/v1/auth/register" do
-    it "creates a user and returns a token pair" do
-      post "/api/v1/auth/register",
-           params: { user: { email: "sam@acme.io", password: "hunter2pw", first_name: "Sam" } }
+# rswag DSL: these examples run as real request tests (run_test! issues the HTTP
+# call and asserts the declared status) AND are the source for the OpenAPI doc
+# (`rake rswag:specs:swaggerize`). One spec, three jobs: test + docs + Postman.
+RSpec.describe "Auth", type: :request do
+  path "/api/v1/auth/register" do
+    post "Register a new user (auto-login)" do
+      tags "Auth"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :payload, in: :body, schema: {
+        type: :object,
+        properties: {
+          user: {
+            type: :object,
+            properties: {
+              email: { type: :string, example: "sam@acme.io" },
+              password: { type: :string, example: "hunter2pw" },
+              first_name: { type: :string, example: "Sam" },
+              last_name: { type: :string, example: "Rivera" }
+            },
+            required: %w[email password]
+          }
+        },
+        required: %w[user]
+      }
 
-      expect(response).to have_http_status(:created)
-      body = JSON.parse(response.body)
-      expect(body["access_token"]).to be_present
-      expect(body["refresh_token"]).to be_present
-      expect(body["user"]["email"]).to eq("sam@acme.io")
-    end
+      response "201", "user created; returns token pair + user + memberships" do
+        let(:payload) { { user: { email: "sam@acme.io", password: "hunter2pw", first_name: "Sam" } } }
+        run_test!
+      end
 
-    it "returns 422 with details on invalid data" do
-      post "/api/v1/auth/register", params: { user: { email: "bad", password: "x" } }
+      response "422", "validation failed" do
+        let(:payload) { { user: { email: "bad", password: "x" } } }
+        run_test!
+      end
 
-      expect(response).to have_http_status(:unprocessable_entity)
-      expect(JSON.parse(response.body).dig("error", "code")).to eq("validation_failed")
-    end
-
-    it "returns 400 when the user param is missing" do
-      post "/api/v1/auth/register", params: { email: "sam@acme.io" }
-      expect(response).to have_http_status(:bad_request)
-    end
-  end
-
-  describe "POST /api/v1/auth/login" do
-    before { Identity::User.create!(email: "sam@acme.io", password: "hunter2pw") }
-
-    it "returns tokens for valid credentials" do
-      post "/api/v1/auth/login", params: { email: "sam@acme.io", password: "hunter2pw" }
-
-      expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["refresh_token"]).to be_present
-    end
-
-    it "returns 401 for bad credentials" do
-      post "/api/v1/auth/login", params: { email: "sam@acme.io", password: "nope" }
-
-      expect(response).to have_http_status(:unauthorized)
-      expect(JSON.parse(response.body).dig("error", "code")).to eq("invalid_credentials")
-    end
-  end
-
-  describe "POST /api/v1/auth/refresh" do
-    it "rotates and returns a new pair" do
-      Identity::User.create!(email: "sam@acme.io", password: "hunter2pw")
-      post "/api/v1/auth/login", params: { email: "sam@acme.io", password: "hunter2pw" }
-      refresh = JSON.parse(response.body)["refresh_token"]
-
-      post "/api/v1/auth/refresh", params: { refresh_token: refresh }
-
-      expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["access_token"]).to be_present
-    end
-
-    it "returns 401 for an invalid refresh token" do
-      post "/api/v1/auth/refresh", params: { refresh_token: "nope" }
-      expect(response).to have_http_status(:unauthorized)
+      response "400", "user param missing" do
+        let(:payload) { { email: "sam@acme.io" } }
+        run_test!
+      end
     end
   end
 
-  describe "POST /api/v1/auth/logout" do
-    it "revokes the refresh token and returns 204" do
-      Identity::User.create!(email: "sam@acme.io", password: "hunter2pw")
-      post "/api/v1/auth/login", params: { email: "sam@acme.io", password: "hunter2pw" }
-      refresh = JSON.parse(response.body)["refresh_token"]
+  path "/api/v1/auth/login" do
+    post "Log in" do
+      tags "Auth"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :payload, in: :body, schema: {
+        type: :object,
+        properties: {
+          email: { type: :string, example: "sam@acme.io" },
+          password: { type: :string, example: "hunter2pw" }
+        },
+        required: %w[email password]
+      }
 
-      post "/api/v1/auth/logout", params: { refresh_token: refresh }
-      expect(response).to have_http_status(:no_content)
+      response "200", "token pair + user + memberships" do
+        before { Identity::User.create!(email: "sam@acme.io", password: "hunter2pw") }
+        let(:payload) { { email: "sam@acme.io", password: "hunter2pw" } }
+        run_test!
+      end
 
-      # token no longer usable
-      post "/api/v1/auth/refresh", params: { refresh_token: refresh }
-      expect(response).to have_http_status(:unauthorized)
+      response "401", "invalid credentials" do
+        let(:payload) { { email: "sam@acme.io", password: "nope" } }
+        run_test!
+      end
     end
   end
 
-  describe "GET /api/v1/me" do
-    it "returns the current user with a valid token" do
-      user = Identity::User.create!(email: "sam@acme.io", password: "hunter2pw")
-      token = Identity::JwtCodec.encode({ sub: user.id.to_s })
+  path "/api/v1/auth/refresh" do
+    post "Rotate tokens with a refresh token" do
+      tags "Auth"
+      consumes "application/json"
+      produces "application/json"
+      parameter name: :payload, in: :body, schema: {
+        type: :object,
+        properties: { refresh_token: { type: :string } },
+        required: %w[refresh_token]
+      }
 
-      get "/api/v1/me", headers: { "Authorization" => "Bearer #{token}" }
+      response "200", "new token pair" do
+        let(:payload) do
+          user = Identity::User.create!(email: "sam@acme.io", password: "hunter2pw")
+          _record, raw = Identity::RefreshToken.issue(user)
+          { refresh_token: raw }
+        end
+        run_test!
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["user"]["email"]).to eq("sam@acme.io")
+      response "401", "invalid or expired refresh token" do
+        let(:payload) { { refresh_token: "nope" } }
+        run_test!
+      end
     end
+  end
 
-    it "returns 401 without a token" do
-      get "/api/v1/me"
-      expect(response).to have_http_status(:unauthorized)
+  path "/api/v1/auth/logout" do
+    post "Log out (revoke one refresh token)" do
+      tags "Auth"
+      consumes "application/json"
+      parameter name: :payload, in: :body, schema: {
+        type: :object,
+        properties: { refresh_token: { type: :string } },
+        required: %w[refresh_token]
+      }
+
+      response "204", "revoked (idempotent)" do
+        let(:payload) do
+          user = Identity::User.create!(email: "sam@acme.io", password: "hunter2pw")
+          _record, raw = Identity::RefreshToken.issue(user)
+          { refresh_token: raw }
+        end
+        run_test!
+      end
     end
+  end
 
-    it "returns 401 with a garbage token" do
-      get "/api/v1/me", headers: { "Authorization" => "Bearer not.a.jwt" }
-      expect(response).to have_http_status(:unauthorized)
+  path "/api/v1/auth/logout_all" do
+    post "Log out everywhere (revoke all refresh tokens)" do
+      tags "Auth"
+      security [ { bearer_auth: [] } ]
+
+      response "204", "all sessions revoked" do
+        let(:user) { Identity::User.create!(email: "sam@acme.io", password: "hunter2pw") }
+        let(:Authorization) { "Bearer #{Identity::JwtCodec.encode({ sub: user.id.to_s })}" }
+        run_test!
+      end
+
+      response "401", "missing/invalid token" do
+        let(:Authorization) { "Bearer not.a.jwt" }
+        run_test!
+      end
+    end
+  end
+
+  path "/api/v1/me" do
+    get "Current user + memberships" do
+      tags "Identity"
+      produces "application/json"
+      security [ { bearer_auth: [] } ]
+
+      response "200", "the current user and their memberships" do
+        let(:user) { Identity::User.create!(email: "sam@acme.io", password: "hunter2pw") }
+        let(:Authorization) { "Bearer #{Identity::JwtCodec.encode({ sub: user.id.to_s })}" }
+        run_test!
+      end
+
+      response "401", "missing/invalid token" do
+        let(:Authorization) { "Bearer not.a.jwt" }
+        run_test!
+      end
     end
   end
 end

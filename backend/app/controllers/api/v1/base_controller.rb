@@ -7,6 +7,7 @@ module Api
     # wiring expands here in Milestone 3 (commit 3.1).
     class BaseController < ApplicationController
       include Authenticatable
+      include Pundit::Authorization
 
       rescue_from ActionController::ParameterMissing do |error|
         render json: {
@@ -14,7 +15,20 @@ module Api
         }, status: :bad_request
       end
 
+      # A policy said no -> 403 with a stable code.
+      rescue_from Pundit::NotAuthorizedError do
+        render json: {
+          error: { code: "forbidden", message: "You are not allowed to perform this action." }
+        }, status: :forbidden
+      end
+
       private
+
+      # Pundit authorizes against the current user (tenant/role come from
+      # Current.membership inside the policies).
+      def pundit_user
+        Current.user
+      end
 
       def user_json(user)
         {

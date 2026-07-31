@@ -13,4 +13,5 @@
 class Current < ActiveSupport::CurrentAttributes
   attribute :tenant
   attribute :user
+  attribute :membership
 end

@@ -135,5 +135,5 @@ both to be removed once U.1 lands:
 - **Feature flags:** inventory + frontend verticals flagged until their milestone's final commit; lets partial work merge to `main` safely.
 - **Seeds:** a `db/seeds` path that provisions one demo tenant + admin user for local/staging, never prod.
 - **Rollback:** because migrations are expand/contract and code reads both old/new shapes during a deploy, any single commit can be reverted without a data migration.
-- **Definition of done per commit:** code + tests + docs/ADR touch (if a decision changed) + green CI + deployable.
+- **Definition of done per commit:** code + tests + docs/ADR touch (if a decision changed) + green CI + deployable. **If the commit adds or changes an API endpoint/payload/status code, it's described as an rswag request spec (ADR-0012) — which serves as the test, the Swagger UI docs, and the Postman import (via OpenAPI). No hand-editing collections.**
 - **Sequencing rationale:** infrastructure (tenancy, auth, API surfaces) precedes domain, so the vertical slice in Milestone 4 drops onto finished rails; audit and frontend layer on last because they depend on the domain existing.

@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # API docs (ADR-0012): Swagger UI at /api-docs, OpenAPI file under the same path.
+  mount Rswag::Ui::Engine => "/api-docs"
+  mount Rswag::Api::Engine => "/api-docs"
+
   # GET /up  ->  HealthController#show
   #
   # "up" is the conventional health-check path in modern Rails. The `as:`
@@ -20,6 +24,10 @@ Rails.application.routes.draw do
       post "auth/logout",     to: "auth#logout"
       post "auth/logout_all", to: "auth#logout_all"
       get  "me",              to: "me#show"
+
+      # Tenant-scoped (served on a tenant subdomain): full resolution + auth +
+      # membership stack. First consumer of TenantBaseController (commit 2.6).
+      get "context", to: "context#show"
     end
   end
 end

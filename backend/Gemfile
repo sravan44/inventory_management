@@ -11,6 +11,7 @@ gem "bootsnap", ">= 1.4.4", require: false  # faster boot via caching
 # --- Auth ---
 gem "bcrypt", "~> 3.1.7"       # has_secure_password (commit 2.1)
 gem "jwt", "~> 2.8"            # access-token encoding (commit 2.4)
+gem "pundit", "~> 2.3"        # policy-object authorization (commit 2.6)
 
 # --- Multi-tenancy (schema-per-tenant, ADR-0002) ---
 # Maintained fork of `apartment`, loaded as the `apartment` module.
@@ -20,6 +21,11 @@ gem "ros-apartment", "~> 3.2", require: "apartment"
 #     so no Draper. Blueprinter shapes JSON; first used in Milestone 4. ---
 gem "blueprinter", "~> 1.1"
 
+# --- API docs (ADR-0012): request specs generate OpenAPI; Swagger UI serves it;
+#     Postman imports the OpenAPI file. ---
+gem "rswag-api", "~> 2.13"
+gem "rswag-ui",  "~> 2.13"
+
 # --- Cross-origin requests from the React SPA (configured in Milestone 3) ---
 # gem "rack-cors"
 
@@ -27,6 +33,7 @@ group :development, :test do
   gem "rspec-rails", "~> 6.1"  # test framework
   gem "dotenv-rails"           # load .env in dev/test
   gem "debug", platforms: %i[mri], require: "debug/prelude"
+  gem "rswag-specs", "~> 2.13" # request-spec DSL that emits OpenAPI (ADR-0012)
 end
 
 group :development do

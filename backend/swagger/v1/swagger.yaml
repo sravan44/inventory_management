@@ -1,0 +1,151 @@
+---
+openapi: 3.0.1
+info:
+  title: Inventory Management API
+  version: v1
+  description: Multi-tenant inventory management SaaS. Global auth endpoints are served
+    on the apex host; tenant-scoped endpoints use a tenant subdomain.
+paths:
+  "/api/v1/auth/register":
+    post:
+      summary: Register a new user (auto-login)
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '201':
+          description: user created; returns token pair + user + memberships
+        '422':
+          description: validation failed
+        '400':
+          description: user param missing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: sam@acme.io
+                    password:
+                      type: string
+                      example: hunter2pw
+                    first_name:
+                      type: string
+                      example: Sam
+                    last_name:
+                      type: string
+                      example: Rivera
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+  "/api/v1/auth/login":
+    post:
+      summary: Log in
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '200':
+          description: token pair + user + memberships
+        '401':
+          description: invalid credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: sam@acme.io
+                password:
+                  type: string
+                  example: hunter2pw
+              required:
+              - email
+              - password
+  "/api/v1/auth/refresh":
+    post:
+      summary: Rotate tokens with a refresh token
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '200':
+          description: new token pair
+        '401':
+          description: invalid or expired refresh token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+              required:
+              - refresh_token
+  "/api/v1/auth/logout":
+    post:
+      summary: Log out (revoke one refresh token)
+      tags:
+      - Auth
+      parameters: []
+      responses:
+        '204':
+          description: revoked (idempotent)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+              required:
+              - refresh_token
+  "/api/v1/auth/logout_all":
+    post:
+      summary: Log out everywhere (revoke all refresh tokens)
+      tags:
+      - Auth
+      security:
+      - bearer_auth: []
+      responses:
+        '204':
+          description: all sessions revoked
+        '401':
+          description: missing/invalid token
+  "/api/v1/me":
+    get:
+      summary: Current user + memberships
+      tags:
+      - Identity
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: the current user and their memberships
+        '401':
+          description: missing/invalid token
+servers:
+- url: http://localhost:3000
+  description: Local apex host (auth, /me)
+- url: http://{subdomain}.lvh.me:3000
+  description: Local tenant host (subdomain-scoped)
+  variables:
+    subdomain:
+      default: acme
+components:
+  securitySchemes:
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
