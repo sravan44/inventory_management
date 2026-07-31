@@ -121,6 +121,8 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.21.1)
+    jwt (2.10.3)
+      base64
     language_server-protocol (3.17.0.6)
     lint_roller (1.1.0)
     logger (1.7.0)
@@ -182,7 +184,7 @@ GEM
     prettyprint (0.2.0)
     prism (1.9.0)
     public_suffix (6.0.2)
-    puma (6.6.1)
+    puma (7.2.1)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.2.6)
@@ -324,8 +326,9 @@ DEPENDENCIES
   bundler-audit
   debug
   dotenv-rails
+  jwt (~> 2.8)
   pg (~> 1.5)
-  puma (~> 6.4)
+  puma (~> 7.2, >= 7.2.1)
   rails (~> 7.1.5)
   ros-apartment (~> 3.2)
   rspec-rails (~> 6.1)

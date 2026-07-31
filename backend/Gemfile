@@ -10,6 +10,7 @@ gem "bootsnap", ">= 1.4.4", require: false  # faster boot via caching
 
 # --- Auth ---
 gem "bcrypt", "~> 3.1.7"       # has_secure_password (commit 2.1)
+gem "jwt", "~> 2.8"            # access-token encoding (commit 2.4)
 
 # --- Multi-tenancy (schema-per-tenant, ADR-0002) ---
 # Maintained fork of `apartment`, loaded as the `apartment` module.

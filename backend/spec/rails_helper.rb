@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 require "spec_helper"
-ENV["RAILS_ENV"] ||= "test"
+# FORCE the test environment. We use `=` not `||=` on purpose: the Docker `web`
+# service sets RAILS_ENV=development, and a plain `||=` would leave it as
+# development — so RSpec would run against the dev database. The test suite must
+# always run in test, regardless of the container's RAILS_ENV.
+ENV["RAILS_ENV"] = "test"
 require_relative "../config/environment"
 
 # Prevent accidentally running the suite against production data.
