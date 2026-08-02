@@ -51,14 +51,18 @@ the standard error envelope.
 
 ---
 
-## Tests
+## Tests / docs
 
-`spec/requests/api/v1/products_spec.rb`: create (201), duplicate → 409 `sku_taken`,
-missing fields → 422, wrong role (`purchasing`) → 403, **API key with `staff` role
-creates (201)**, show (200 / 404 for deleted), update (200), destroy (204).
+`spec/requests/api/v1/products_spec.rb` is written in the **rswag DSL** (ADR-0012),
+so it both tests and feeds the OpenAPI docs. It's tenant-scoped, so it stubs the
+Apartment switch and pins the host with `host! "acme.example.com"`, authenticating
+as a sample admin member; individual responses override `Authorization` to
+document each policy outcome: create 201 / 409 `sku_taken` / 422 / 403
+(purchasing), show 200 / 404, update 200, delete 204.
 
 ```bash
 docker compose exec web bundle exec rspec spec/requests/api/v1/products_spec.rb
+docker compose exec -e RAILS_ENV=test web bin/rails rswag:specs:swaggerize   # regen OpenAPI
 ```
 
 Live (user path):

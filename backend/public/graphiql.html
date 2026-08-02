@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>GraphiQL — Inventory Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { margin: 0; height: 100vh; }
+      #graphiql { height: 100vh; }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
+  </head>
+  <body>
+    <div id="graphiql">Loading GraphiQL…</div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/graphiql/graphiql.min.js"></script>
+    <script>
+      // Posts to /graphql on THIS host — so open GraphiQL on a tenant subdomain,
+      // e.g. http://acme.lvh.me:3000/graphiql.html . Add your token in the
+      // "Headers" panel:  { "Authorization": "Bearer <access_token>" }
+      const fetcher = GraphiQL.createFetcher({ url: "/graphql" });
+      const root = ReactDOM.createRoot(document.getElementById("graphiql"));
+      root.render(React.createElement(GraphiQL, { fetcher, defaultEditorToolsVisibility: "headers" }));
+    </script>
+  </body>
+</html>

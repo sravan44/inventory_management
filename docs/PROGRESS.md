@@ -170,6 +170,7 @@ curl http://localhost:3000/up
 | `docs/PATTERNS.md` | Service/worker/serializer/decorator/mailer conventions |
 | `docs/IMPLEMENTATION_PLAN.md` | Commit-by-commit build plan (all milestones) |
 | `docs/DEV_PERFORMANCE.md` | Gem caching + test-speed strategy (tiered) |
+| `docs/GRAPHQL.md` | GraphQL docs: GraphiQL IDE + SDL (why not Swagger) |
 | `docs/adr/*` | Decision records 0001–0015 |
 | `docs/step7/commit-*.md` | Narrated walkthrough of each implemented commit |
 | `postman/` | Superseded by OpenAPI import (see `postman/README.md`) |

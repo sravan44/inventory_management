@@ -135,6 +135,135 @@ paths:
           description: the current user and their memberships
         '401':
           description: missing/invalid token
+  "/api/v1/products":
+    post:
+      summary: Create a product
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: created (admin/staff, or an API key with that role)
+        '409':
+          description: duplicate SKU (sku_taken)
+        '422':
+          description: validation failed
+        '403':
+          description: a role that can't manage inventory (purchasing)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: object
+                  properties:
+                    sku:
+                      type: string
+                      example: ABC-1
+                    name:
+                      type: string
+                      example: Widget
+                    description:
+                      type: string
+                    unit_of_measure:
+                      type: string
+                      example: each
+                  required:
+                  - sku
+                  - name
+              required:
+              - product
+  "/api/v1/products/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Show a product
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      responses:
+        '200':
+          description: found
+        '404':
+          description: soft-deleted or missing
+    patch:
+      summary: Update a product
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '200':
+          description: updated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    unit_of_measure:
+                      type: string
+              required:
+              - product
+    delete:
+      summary: Soft-delete a product
+      tags:
+      - Products
+      security:
+      - bearer_auth: []
+      responses:
+        '204':
+          description: deleted
+  "/api/v1/tenants":
+    post:
+      summary: Create a tenant (async provisioning)
+      tags:
+      - Tenants
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '202':
+          description: created; provisioning enqueued; creator is admin
+        '401':
+          description: not authenticated
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tenant:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: Acme
+                    subdomain:
+                      type: string
+                      example: acme
+                  required:
+                  - name
+                  - subdomain
+              required:
+              - tenant
 servers:
 - url: http://localhost:3000
   description: Local apex host (auth, /me)
