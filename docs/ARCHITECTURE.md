@@ -41,6 +41,7 @@ Multi-tenant SaaS covering the full supply chain: stock tracking, purchasing, sa
 | 13 | Dev/test performance strategy (tiered) | [ADR-0013](adr/0013-dev-test-performance-strategy.md) |
 | 14 | RailsAdmin — attempted, deferred (asset pipeline); super_admin flag kept | [ADR-0014](adr/0014-rails-admin-enablement.md) |
 | 15 | Motor Admin adopted (self-contained assets), gated + at /admin | [ADR-0015](adr/0015-motor-admin.md) |
+| 16 | Observability: Sentry + pluggable LLM log viewer (Mongo + file) | [ADR-0016](adr/0016-observability-and-log-viewer.md) |
 
 Detailed schema: [DATABASE.md](DATABASE.md). API contract: [API_DESIGN.md](API_DESIGN.md). Build sequence: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). App-layer patterns: [PATTERNS.md](PATTERNS.md).
 

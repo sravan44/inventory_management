@@ -51,6 +51,10 @@ Rails.application.routes.draw do
 
       # Stock: record a movement (write) + show one. Levels/ledger listing is GraphQL.
       resources :stock_movements, only: %i[create show]
+
+      # Audit logs (ADR-0007), day-wise browsing for tenant admins.
+      get "activity_logs/summary", to: "activity_logs#summary"
+      get "activity_logs",         to: "activity_logs#index"
     end
   end
 end

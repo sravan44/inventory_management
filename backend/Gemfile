@@ -42,6 +42,15 @@ gem "rack-attack"
 # --- Redis: audit-log stream buffer (ADR-0007) + jobs/rate-limit store (M5) ---
 gem "redis", "~> 5.0"
 
+# --- MongoDB: durable audit-log sink (ADR-0007). Low-level driver, not Mongoid,
+#     to avoid an ODM alongside ActiveRecord. ---
+gem "mongo", "~> 2.20"
+
+# --- Observability (ADR-0016) ---
+gem "sentry-ruby"             # exception tracking (gated on SENTRY_DSN)
+gem "sentry-rails"
+gem "ruby-openai"             # LLM natural-language log search (gated on OPENAI_API_KEY)
+
 group :development, :test do
   gem "rspec-rails", "~> 6.1"  # test framework
   gem "dotenv-rails"           # load .env in dev/test

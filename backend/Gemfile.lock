@@ -97,6 +97,7 @@ GEM
       msgpack (~> 1.2)
     brakeman (8.0.5)
       racc
+    bson (5.2.0)
     builder (3.3.0)
     bundler-audit (0.9.3)
       bundler (>= 1.2.0)
@@ -121,11 +122,20 @@ GEM
     erubi (1.13.1)
     et-orbi (1.4.1)
       tzinfo
+    event_stream_parser (1.0.0)
     factory_bot (6.6.0)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
       railties (>= 6.1.0)
+    faraday (2.14.3)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-multipart (1.2.0)
+      multipart-post (~> 2.0)
+    faraday-net_http (3.4.4)
+      net-http (~> 0.5)
     fiber-storage (1.0.1)
     fugit (1.13.0)
       et-orbi (~> 1.4)
@@ -172,6 +182,9 @@ GEM
       prism (~> 1.5)
     mock_redis (0.55.0)
       redis (~> 5)
+    mongo (2.25.0)
+      base64
+      bson (>= 4.14.1, < 6.0.0)
     motor-admin (0.5.0)
       ar_lazy_preload (~> 1.0)
       audited (~> 5.0)
@@ -180,7 +193,10 @@ GEM
       fugit (~> 1.0)
       rails (>= 5.2)
     msgpack (1.8.3)
+    multipart-post (2.4.1)
     mutex_m (0.3.0)
+    net-http (0.9.1)
+      uri (>= 0.11.1)
     net-imap (0.6.6)
       date
       net-protocol
@@ -354,8 +370,19 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
+    ruby-openai (8.3.0)
+      event_stream_parser (>= 0.3.0, < 2.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
+    sentry-rails (6.6.2)
+      railties (>= 5.2.0)
+      sentry-ruby (~> 6.6.2)
+    sentry-ruby (6.6.2)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      logger
     thor (1.5.0)
     timeout (0.6.1)
     tsort (0.2.0)
@@ -364,6 +391,7 @@ GEM
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.2.0)
+    uri (1.1.1)
     websocket-driver (0.8.2)
       base64
       websocket-extensions (>= 0.1.0)
@@ -394,6 +422,7 @@ DEPENDENCIES
   graphql-batch
   jwt (~> 2.8)
   mock_redis
+  mongo (~> 2.20)
   motor-admin
   pg (~> 1.5)
   puma (~> 7.2, >= 7.2.1)
@@ -408,6 +437,9 @@ DEPENDENCIES
   rswag-specs (~> 2.13)
   rswag-ui (~> 2.13)
   rubocop-rails-omakase
+  ruby-openai
+  sentry-rails
+  sentry-ruby
 
 RUBY VERSION
    ruby 3.3.5p100
