@@ -43,6 +43,10 @@ Rails.application.routes.draw do
 
       # API keys (commit 3.3): tenant-scoped, admin-user managed.
       resources :api_keys, only: %i[index create destroy]
+
+      # Inventory (Milestone 4). Individual CRUD is REST; listing + status changes
+      # are GraphQL (ADR-0009), so no :index here.
+      resources :products, only: %i[show create update destroy]
     end
   end
 end
