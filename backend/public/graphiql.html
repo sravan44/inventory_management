@@ -1,28 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>GraphiQL — Inventory Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      body { margin: 0; height: 100vh; }
-      #graphiql { height: 100vh; }
+      body { margin: 0; }
+      #graphiql { height: 100dvh; }
+      .loading { font-family: sans-serif; padding: 2rem; }
     </style>
-    <link rel="stylesheet" href="https://unpkg.com/graphiql/graphiql.min.css" />
+    <link rel="stylesheet" href="https://esm.sh/graphiql/dist/style.css" />
   </head>
   <body>
-    <div id="graphiql">Loading GraphiQL…</div>
+    <div id="graphiql"><div class="loading">Loading GraphiQL…</div></div>
 
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/graphiql/graphiql.min.js"></script>
-    <script>
-      // Posts to /graphql on THIS host — so open GraphiQL on a tenant subdomain,
-      // e.g. http://acme.lvh.me:3000/graphiql.html . Add your token in the
-      // "Headers" panel:  { "Authorization": "Bearer <access_token>" }
-      const fetcher = GraphiQL.createFetcher({ url: "/graphql" });
+    <!-- Open on a TENANT subdomain (e.g. http://acme.lvh.me:3000/graphiql.html)
+         and put your token in the Headers panel:
+           { "Authorization": "Bearer <access_token>" } -->
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.1.0",
+          "react/jsx-runtime": "https://esm.sh/react@19.1.0/jsx-runtime",
+          "react-dom": "https://esm.sh/react-dom@19.1.0",
+          "react-dom/client": "https://esm.sh/react-dom@19.1.0/client",
+          "graphiql": "https://esm.sh/graphiql?standalone&external=react,react-dom,@graphiql/react,graphql",
+          "@graphiql/react": "https://esm.sh/@graphiql/react?standalone&external=react,react-dom,graphql,@emotion/is-prop-valid",
+          "@graphiql/toolkit": "https://esm.sh/@graphiql/toolkit?standalone&external=graphql",
+          "graphql": "https://esm.sh/graphql@16.11.0",
+          "@emotion/is-prop-valid": "data:text/javascript,export default function () { return false }"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import React from "react";
+      import ReactDOM from "react-dom/client";
+      import { GraphiQL } from "graphiql";
+      import { createGraphiQLFetcher } from "@graphiql/toolkit";
+
+      const fetcher = createGraphiQLFetcher({ url: "/graphql" });
+
+      // GraphiQL persists tabs/headers in localStorage, so the sample tabs below
+      // only seed on a fresh state. Visit /graphiql.html?reset=1 to clear the
+      // saved state and reload the samples (does nothing on a normal visit, so
+      // your own work is preserved).
+      if (new URLSearchParams(location.search).has("reset")) {
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith("graphiql:"))
+          .forEach((k) => localStorage.removeItem(k));
+      }
+
+      // Sample operations, pre-loaded as tabs (like Postman saved requests).
+      const defaultTabs = [
+        {
+          query: `# Who am I in this tenant?
+query Viewer {
+  viewer { email role tenantSubdomain }
+}`
+        },
+        {
+          query: `# List products (cursor pagination)
+query Products {
+  products(first: 20) {
+    edges { node { id sku name active } }
+    pageInfo { hasNextPage endCursor }
+  }
+}`
+        },
+        {
+          query: `# Filter products by active flag / search
+query ActiveProducts($active: Boolean, $query: String) {
+  products(first: 20, active: $active, query: $query) {
+    edges { node { sku name active } }
+  }
+}`,
+          variables: `{ "active": true, "query": "" }`
+        },
+        {
+          query: `# Deactivate (or activate) a product
+mutation SetActive($id: ID!, $active: Boolean!) {
+  setProductActive(input: { id: $id, active: $active }) {
+    product { id active }
+    userErrors { code message }
+  }
+}`,
+          variables: `{ "id": "1", "active": false }`
+        }
+      ];
+
+      const defaultHeaders = `{
+  "Authorization": "Bearer PASTE_ACCESS_TOKEN"
+}`;
+
       const root = ReactDOM.createRoot(document.getElementById("graphiql"));
-      root.render(React.createElement(GraphiQL, { fetcher, defaultEditorToolsVisibility: "headers" }));
+      root.render(
+        React.createElement(GraphiQL, {
+          fetcher,
+          defaultTabs,
+          defaultHeaders,
+          defaultEditorToolsVisibility: "headers"
+        })
+      );
     </script>
   </body>
 </html>
