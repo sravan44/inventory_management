@@ -1,0 +1,15 @@
+# Development image for the Vite dev server. Installs deps into the image; the
+# compose service adds an anonymous volume over /app/node_modules so the source
+# bind-mount doesn't shadow them (same lesson as the backend's gems).
+FROM node:20-slim
+
+WORKDIR /app
+
+# Install deps first (layer caching). Only re-runs when package.json changes.
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host"]

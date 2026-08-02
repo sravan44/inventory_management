@@ -68,6 +68,21 @@ services:
       mongo:
         condition: service_started
 
+  # React SPA dev server (commit 6.1). The anonymous /app/node_modules volume keeps
+  # the image's installed deps from being shadowed by the source bind-mount.
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      VITE_API_URL: http://localhost:3000
+
 volumes:
   pg_data:
   mongo_data:
