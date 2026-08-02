@@ -11,6 +11,7 @@ module Api
     class TenantBaseController < BaseController
       include TenantResolution
       include ActorAuthentication
+      include Auditable
 
       before_action :authenticate_actor!
 

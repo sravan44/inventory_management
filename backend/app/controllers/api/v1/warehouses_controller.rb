@@ -14,6 +14,7 @@ module Api
         authorize Inventory::Warehouse
         warehouse = Inventory::Warehouse.new(warehouse_params)
         if warehouse.save
+          audit("warehouse.created", resource: warehouse, metadata: { code: warehouse.code })
           render json: Inventory::WarehouseSerializer.render(warehouse), status: :created
         else
           render_warehouse_errors(warehouse)
@@ -24,6 +25,7 @@ module Api
         warehouse = Inventory::Warehouse.kept.find(params[:id])
         authorize warehouse
         if warehouse.update(warehouse_params)
+          audit("warehouse.updated", resource: warehouse)
           render json: Inventory::WarehouseSerializer.render(warehouse)
         else
           render_warehouse_errors(warehouse)
@@ -34,6 +36,7 @@ module Api
         warehouse = Inventory::Warehouse.kept.find(params[:id])
         authorize warehouse
         warehouse.soft_delete!
+        audit("warehouse.deleted", resource: warehouse)
         head :no_content
       end
 

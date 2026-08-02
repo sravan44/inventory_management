@@ -28,6 +28,8 @@ module Mutations
         movement_type: movement_type, quantity_delta: quantity_delta,
         actor: Current.actor
       )
+      Audit::Logger.log(action: "stock.recorded", resource: movement,
+                        metadata: { movement_type: movement.movement_type, quantity_delta: movement.quantity_delta })
       { movement: movement, user_errors: [] }
     rescue Inventory::StockMovementService::InsufficientStock => e
       { movement: nil, user_errors: [ { code: "insufficient_stock", message: e.message } ] }

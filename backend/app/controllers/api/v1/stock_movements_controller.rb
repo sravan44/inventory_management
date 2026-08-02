@@ -17,6 +17,10 @@ module Api
           quantity_delta: movement_params[:quantity_delta],
           actor: Current.actor
         )
+        audit("stock.recorded", resource: movement, metadata: {
+          movement_type: movement.movement_type, quantity_delta: movement.quantity_delta,
+          product_id: product.id, warehouse_id: warehouse.id
+        })
         render json: Inventory::StockMovementSerializer.render(movement), status: :created
       rescue Inventory::StockMovementService::InsufficientStock => e
         render_error(:conflict, "insufficient_stock", e.message)

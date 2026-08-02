@@ -16,6 +16,7 @@ module Api
         authorize Inventory::Product
         product = Inventory::Product.new(product_params)
         if product.save
+          audit("product.created", resource: product, metadata: { sku: product.sku })
           render json: Inventory::ProductSerializer.render(product), status: :created
         else
           render_product_errors(product)
@@ -26,6 +27,7 @@ module Api
         product = Inventory::Product.kept.find(params[:id])
         authorize product
         if product.update(product_params)
+          audit("product.updated", resource: product)
           render json: Inventory::ProductSerializer.render(product)
         else
           render_product_errors(product)
@@ -36,6 +38,7 @@ module Api
         product = Inventory::Product.kept.find(params[:id])
         authorize product
         product.soft_delete!
+        audit("product.deleted", resource: product)
         head :no_content
       end
 

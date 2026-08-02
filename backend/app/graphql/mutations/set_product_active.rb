@@ -21,6 +21,7 @@ module Mutations
       authorize!(product, :update?)   # ProductPolicy#update? on Current.role
       product.update!(active: active)
 
+      Audit::Logger.log(action: active ? "product.activated" : "product.deactivated", resource: product)
       { product: product, user_errors: [] }
     end
   end

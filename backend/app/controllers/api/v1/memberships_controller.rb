@@ -20,6 +20,7 @@ module Api
         membership = Identity::Membership.create!(
           user: user, tenant: Current.tenant, role: invite_params[:role], status: :invited
         )
+        audit("membership.invited", resource: membership, metadata: { email: user.email, role: membership.role })
         render json: membership_json(membership), status: :created
       end
 
@@ -28,6 +29,7 @@ module Api
         membership = Identity::Membership.where(tenant: Current.tenant).find(params[:id])
         authorize membership
         membership.revoke!
+        audit("membership.revoked", resource: membership)
         head :no_content
       end
 

@@ -3,8 +3,9 @@
 A single-page memory refresher. For deep detail see the linked docs; this is the
 "where are we and how did we get here" overview.
 
-**Status:** Milestones 0–4 complete (foundation + identity/auth + dual API infra +
-Inventory vertical slice). Next up: Milestone 5 (audit logging + Sidekiq/Redis).
+**Status:** Milestones 0–5 complete (foundation, identity/auth, dual API, Inventory
+slice, audit logging + observability). Next up: Milestone 6 (React SPA); Milestone U
+(framework upgrades).
 
 ---
 
@@ -85,6 +86,14 @@ Core product shape:
 | 4.4 | `Warehouse` (model + REST CRUD + GraphQL list) |
 | 4.5 | `StockLevel` projection + `StockMovement` append-only ledger |
 | 4.6 | `StockMovementService` (txn + FOR UPDATE + no-negative) + REST/GraphQL record & queries |
+
+### Milestone 5 — Audit logging & observability
+| Commit | Delivered |
+|---|---|
+| 5.1 | Activity-log emit → Redis Stream (async job + producer) |
+| 5.2 | Mongo sink (drain worker, idempotent) + day-wise mgmt (day field, TTL, browse endpoint) |
+| 5.3 | Sentry exception tracking + pluggable LLM log viewer (Mongo + file sources, NL search) |
+| 5.4 | Instrument operations to emit events (products/warehouses/stock/memberships/api_keys) |
 
 ---
 

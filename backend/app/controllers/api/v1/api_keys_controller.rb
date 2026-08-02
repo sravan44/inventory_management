@@ -18,6 +18,7 @@ module Api
           name: api_key_params[:name],
           role: api_key_params[:role].presence || :staff
         )
+        audit("api_key.created", resource: record, metadata: { name: record.name, role: record.role })
         # `token` (the raw key) is included ONLY here.
         render json: api_key_json(record).merge(token: raw), status: :created
       end
@@ -26,6 +27,7 @@ module Api
         key = Identity::ApiKey.where(tenant: Current.tenant).find(params[:id])
         authorize key
         key.revoke!
+        audit("api_key.revoked", resource: key, metadata: { name: key.name })
         head :no_content
       end
 
