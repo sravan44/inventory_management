@@ -14,4 +14,18 @@ FactoryBot.define do
     address { { "city" => "Austin" } }
     active { true }
   end
+
+  factory :stock_level, class: "Inventory::StockLevel" do
+    association :product
+    association :warehouse
+    quantity_on_hand { 0 }
+    quantity_reserved { 0 }
+  end
+
+  factory :stock_movement, class: "Inventory::StockMovement" do
+    association :product
+    association :warehouse
+    movement_type { :receipt }
+    quantity_delta { 10 }
+  end
 end
