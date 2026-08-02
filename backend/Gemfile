@@ -39,12 +39,16 @@ gem "motor-admin"
 gem "rack-cors"
 gem "rack-attack"
 
+# --- Redis: audit-log stream buffer (ADR-0007) + jobs/rate-limit store (M5) ---
+gem "redis", "~> 5.0"
+
 group :development, :test do
   gem "rspec-rails", "~> 6.1"  # test framework
   gem "dotenv-rails"           # load .env in dev/test
   gem "debug", platforms: %i[mri], require: "debug/prelude"
   gem "rswag-specs", "~> 2.13" # request-spec DSL that emits OpenAPI (ADR-0012)
   gem "factory_bot_rails", "~> 6.4" # test data factories (prefer build_stubbed; ADR-0013)
+  gem "mock_redis"                  # in-memory Redis for specs (no real Redis needed)
 end
 
 group :development do

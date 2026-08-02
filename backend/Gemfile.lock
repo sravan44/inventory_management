@@ -170,6 +170,8 @@ GEM
     minitest (6.0.6)
       drb (~> 2.0)
       prism (~> 1.5)
+    mock_redis (0.55.0)
+      redis (~> 5)
     motor-admin (0.5.0)
       ar_lazy_preload (~> 1.0)
       audited (~> 5.0)
@@ -283,6 +285,10 @@ GEM
       prism (>= 1.6.0)
       rbs (>= 4.0.0)
       tsort
+    redis (5.4.1)
+      redis-client (>= 0.22.0)
+    redis-client (0.30.1)
+      connection_pool
     regexp_parser (2.12.0)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -387,6 +393,7 @@ DEPENDENCIES
   graphql (~> 2.3)
   graphql-batch
   jwt (~> 2.8)
+  mock_redis
   motor-admin
   pg (~> 1.5)
   puma (~> 7.2, >= 7.2.1)
@@ -394,6 +401,7 @@ DEPENDENCIES
   rack-attack
   rack-cors
   rails (~> 7.1.5)
+  redis (~> 5.0)
   ros-apartment (~> 3.2)
   rspec-rails (~> 6.1)
   rswag-api (~> 2.13)

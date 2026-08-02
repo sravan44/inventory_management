@@ -26,6 +26,11 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"            # buffer for the audit-log pipeline (ADR-0007) + jobs
+
   web:
     build: ./backend           # builds backend/Dockerfile
     command: bin/rails server -b 0.0.0.0
@@ -34,15 +39,24 @@ services:
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
       RAILS_ENV: development
+      REDIS_URL: redis://redis:6379/0
+      # Platform admin (RailsAdmin) credentials. Defaults for local dev; override
+      # by putting ADMIN_USER / ADMIN_PASSWORD in a repo-root .env file.
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
     ports:
       - "3000:3000"            # http://localhost:3000
     volumes:
       - ./backend:/app         # live-mount source -> code edits reload without rebuild
-      - bundle:/usr/local/bundle  # cache installed gems in a named volume
+      # NOTE: no named volume over /usr/local/bundle — the gems installed during
+      # `docker compose build` live in the image and are used directly. (A bundle
+      # volume would shadow them with an empty dir on first run.) Trade-off:
+      # changing the Gemfile means `docker compose build web` again.
     depends_on:
       db:
         condition: service_healthy   # don't start web until db passes its healthcheck
+      redis:
+        condition: service_started
 
 volumes:
   pg_data:
-  bundle:
