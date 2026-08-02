@@ -7,4 +7,11 @@ FactoryBot.define do
     unit_of_measure { "each" }
     active { true }
   end
+
+  factory :warehouse, class: "Inventory::Warehouse" do
+    sequence(:code) { |n| "WH-#{n}" }
+    name { "Main Warehouse" }
+    address { { "city" => "Austin" } }
+    active { true }
+  end
 end

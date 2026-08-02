@@ -13,6 +13,11 @@ module Types
       argument :query, String, required: false, description: "Search name/SKU."
     end
 
+    field :warehouses, Types::WarehouseType.connection_type, null: false,
+                                                             description: "Warehouses in the current tenant." do
+      argument :active, Boolean, required: false, description: "Filter by active flag."
+    end
+
     def viewer
       return nil unless context[:current_user]
 
@@ -27,6 +32,12 @@ module Types
       scope = Inventory::Product.kept.order(created_at: :desc)
       scope = scope.where(active: active) unless active.nil?
       scope = scope.where("name ILIKE :q OR sku ILIKE :q", q: "%#{query}%") if query.present?
+      scope
+    end
+
+    def warehouses(active: nil)
+      scope = Inventory::Warehouse.kept.order(created_at: :desc)
+      scope = scope.where(active: active) unless active.nil?
       scope
     end
   end
