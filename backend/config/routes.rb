@@ -48,6 +48,9 @@ Rails.application.routes.draw do
       # are GraphQL (ADR-0009), so no :index here.
       resources :products, only: %i[show create update destroy]
       resources :warehouses, only: %i[show create update destroy]
+
+      # Stock: record a movement (write) + show one. Levels/ledger listing is GraphQL.
+      resources :stock_movements, only: %i[create show]
     end
   end
 end

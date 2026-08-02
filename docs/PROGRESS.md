@@ -3,8 +3,8 @@
 A single-page memory refresher. For deep detail see the linked docs; this is the
 "where are we and how did we get here" overview.
 
-**Status:** Milestones 0–3 complete (foundation + identity/auth + dual API infra).
-Next up: Milestone 4 (Inventory vertical slice).
+**Status:** Milestones 0–4 complete (foundation + identity/auth + dual API infra +
+Inventory vertical slice). Next up: Milestone 5 (audit logging + Sidekiq/Redis).
 
 ---
 
@@ -75,6 +75,16 @@ Core product shape:
 | 3.3 | `Identity::ApiKey` + **dual authentication** (Bearer JWT or Api-Key → `Current.actor`) |
 | 3.4 | GraphQL surface (`/graphql`, first-party/JWT-only, batch + depth/complexity limits) |
 | 3.5 | Rate limiting (Rack::Attack) + CORS; test-DB auto-migration |
+
+### Milestone 4 — Inventory vertical slice
+| Commit | Delivered |
+|---|---|
+| 4.1 | `Inventory::Product` + products tenant migration (partial-unique SKU) |
+| 4.2 | Product REST CRUD + Blueprinter serializer + policy (honors API keys) |
+| 4.3 | Product GraphQL (`products` connection + `setProductActive`) |
+| 4.4 | `Warehouse` (model + REST CRUD + GraphQL list) |
+| 4.5 | `StockLevel` projection + `StockMovement` append-only ledger |
+| 4.6 | `StockMovementService` (txn + FOR UPDATE + no-negative) + REST/GraphQL record & queries |
 
 ---
 

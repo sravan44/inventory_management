@@ -231,6 +231,49 @@ paths:
       responses:
         '204':
           description: deleted
+  "/api/v1/stock_movements":
+    post:
+      summary: Record a stock movement
+      tags:
+      - Stock
+      security:
+      - bearer_auth: []
+      parameters: []
+      responses:
+        '201':
+          description: recorded (ledger row + level updated)
+        '409':
+          description: insufficient stock
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stock_movement:
+                  type: object
+                  properties:
+                    product_id:
+                      type: string
+                    warehouse_id:
+                      type: string
+                    movement_type:
+                      type: string
+                      enum:
+                      - receipt
+                      - adjustment
+                      - transfer_in
+                      - transfer_out
+                      - sale
+                    quantity_delta:
+                      type: integer
+                  required:
+                  - product_id
+                  - warehouse_id
+                  - movement_type
+                  - quantity_delta
+              required:
+              - stock_movement
   "/api/v1/tenants":
     post:
       summary: Create a tenant (async provisioning)

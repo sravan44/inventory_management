@@ -18,6 +18,18 @@ module Types
       argument :active, Boolean, required: false, description: "Filter by active flag."
     end
 
+    field :stock_levels, Types::StockLevelType.connection_type, null: false,
+                                                               description: "Current stock levels." do
+      argument :product_id, ID, required: false
+      argument :warehouse_id, ID, required: false
+    end
+
+    field :stock_movements, Types::StockMovementType.connection_type, null: false,
+                                                                     description: "The stock movement ledger." do
+      argument :product_id, ID, required: false
+      argument :warehouse_id, ID, required: false
+    end
+
     def viewer
       return nil unless context[:current_user]
 
@@ -38,6 +50,20 @@ module Types
     def warehouses(active: nil)
       scope = Inventory::Warehouse.kept.order(created_at: :desc)
       scope = scope.where(active: active) unless active.nil?
+      scope
+    end
+
+    def stock_levels(product_id: nil, warehouse_id: nil)
+      scope = Inventory::StockLevel.order(:id)
+      scope = scope.where(product_id: product_id) if product_id
+      scope = scope.where(warehouse_id: warehouse_id) if warehouse_id
+      scope
+    end
+
+    def stock_movements(product_id: nil, warehouse_id: nil)
+      scope = Inventory::StockMovement.order(created_at: :desc)
+      scope = scope.where(product_id: product_id) if product_id
+      scope = scope.where(warehouse_id: warehouse_id) if warehouse_id
       scope
     end
   end
