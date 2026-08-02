@@ -13,6 +13,10 @@ gem "bcrypt", "~> 3.1.7"       # has_secure_password (commit 2.1)
 gem "jwt", "~> 2.8"            # access-token encoding (commit 2.4)
 gem "pundit", "~> 2.3"        # policy-object authorization (commit 2.6)
 
+# --- GraphQL (ADR-0009): first-party SPA surface. graphql-batch avoids N+1. ---
+gem "graphql", "~> 2.3"
+gem "graphql-batch"
+
 # --- Multi-tenancy (schema-per-tenant, ADR-0002) ---
 # Maintained fork of `apartment`, loaded as the `apartment` module.
 gem "ros-apartment", "~> 3.2", require: "apartment"
@@ -31,8 +35,9 @@ gem "rswag-ui",  "~> 2.13"
 #     config/initializers/motor.rb. Replaces the deferred RailsAdmin (ADR-0014). ---
 gem "motor-admin"
 
-# --- Cross-origin requests from the React SPA (configured in Milestone 3) ---
-# gem "rack-cors"
+# --- Cross-origin (React SPA) + rate limiting (commit 3.5) ---
+gem "rack-cors"
+gem "rack-attack"
 
 group :development, :test do
   gem "rspec-rails", "~> 6.1"  # test framework

@@ -3,6 +3,10 @@ Rails.application.routes.draw do
   # config/initializers/motor.rb. (RailsAdmin was attempted and deferred, ADR-0014.)
   mount Motor::Admin => "/admin"
 
+  # GraphQL (ADR-0009): first-party SPA surface, served on a tenant subdomain.
+  # User-JWT only (rejects API keys). See GraphqlController.
+  post "/graphql", to: "graphql#execute"
+
   # API docs (ADR-0012): Swagger UI at /api-docs, OpenAPI file under the same path.
   mount Rswag::Ui::Engine => "/api-docs"
   mount Rswag::Api::Engine => "/api-docs"

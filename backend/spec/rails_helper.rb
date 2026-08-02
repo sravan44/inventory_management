@@ -38,4 +38,11 @@ RSpec.configure do |config|
   # FactoryBot: expose build / build_stubbed / create without the FactoryBot
   # prefix. Prefer build_stubbed (no DB) > build (unsaved) > create (persisted).
   config.include FactoryBot::Syntax::Methods
+
+  # Auto-prepare the test DB: run any pending migrations before the suite. We
+  # build the test schema by migrating (not loading structure.sql), so this makes
+  # `rspec` self-sufficient — no separate "migrate the test DB" step to forget.
+  config.before(:suite) do
+    ActiveRecord::Tasks::DatabaseTasks.migrate
+  end
 end

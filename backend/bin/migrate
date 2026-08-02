@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Migrate BOTH the development and test databases in one shot.
+#   docker compose exec web bin/migrate
+# (Tests also self-migrate via spec/rails_helper.rb, so this is mainly for the
+#  development DB / running app — but it keeps both in lockstep.)
+set -e
+
+echo "== development =="
+bin/rails db:migrate
+
+echo "== test =="
+RAILS_ENV=test bin/rails db:migrate
