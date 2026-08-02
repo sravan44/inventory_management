@@ -52,6 +52,9 @@ Decision: full stack now (done); **defer the RailsAdmin mount to its own milesto
 with the host/super-admin/tenant-switcher handling above. If a lighter touch
 suffices, Avo or a hand-built admin namespace are alternatives to revisit then.
 
+> UPDATE: RailsAdmin was subsequently enabled — see **ADR-0014** (isolated `admin`
+> subdomain, HTTP-Basic gate, public/identity models, `super_admin` flag added).
+
 ## Consequences
 
 - New code lands in the right layer by default; reviews enforce "no business logic

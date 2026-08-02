@@ -27,4 +27,11 @@ FactoryBot.define do
     token_digest { Identity::RefreshToken.digest(SecureRandom.hex(16)) }
     expires_at { 30.days.from_now }
   end
+
+  factory :api_key, class: "Identity::ApiKey" do
+    association :tenant
+    sequence(:name) { |n| "Key #{n}" }
+    role { :staff }
+    token_digest { Identity::ApiKey.digest(SecureRandom.hex(16)) }
+  end
 end

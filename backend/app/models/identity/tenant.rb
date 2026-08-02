@@ -25,6 +25,9 @@ module Identity
     has_many :memberships, class_name: "Identity::Membership", dependent: :destroy
     has_many :users, through: :memberships, source: :user
 
+    # Third-party API keys scoped to this tenant (ADR-0010).
+    has_many :api_keys, class_name: "Identity::ApiKey", dependent: :destroy
+
     enum :status,
          { pending_provisioning: 0, active: 1, suspended: 2 },
          default: :pending_provisioning

@@ -26,6 +26,11 @@ gem "blueprinter", "~> 1.1"
 gem "rswag-api", "~> 2.13"
 gem "rswag-ui",  "~> 2.13"
 
+# --- Platform admin UI (ADR-0015): Motor Admin. Self-contained (ships its own
+#     prebuilt assets, no JS build step), gated by HTTP Basic in
+#     config/initializers/motor.rb. Replaces the deferred RailsAdmin (ADR-0014). ---
+gem "motor-admin"
+
 # --- Cross-origin requests from the React SPA (configured in Milestone 3) ---
 # gem "rack-cors"
 

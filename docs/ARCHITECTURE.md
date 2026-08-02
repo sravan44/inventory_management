@@ -39,6 +39,8 @@ Multi-tenant SaaS covering the full supply chain: stock tracking, purchasing, sa
 | 11 | App layers (service/worker/serializer/decorator) + mailer + admin | [ADR-0011](adr/0011-application-layers-and-tooling.md) |
 | 12 | API docs via rswag (OpenAPI) → Swagger UI + Postman | [ADR-0012](adr/0012-api-docs-via-rswag-openapi.md) |
 | 13 | Dev/test performance strategy (tiered) | [ADR-0013](adr/0013-dev-test-performance-strategy.md) |
+| 14 | RailsAdmin — attempted, deferred (asset pipeline); super_admin flag kept | [ADR-0014](adr/0014-rails-admin-enablement.md) |
+| 15 | Motor Admin adopted (self-contained assets), gated + at /admin | [ADR-0015](adr/0015-motor-admin.md) |
 
 Detailed schema: [DATABASE.md](DATABASE.md). API contract: [API_DESIGN.md](API_DESIGN.md). Build sequence: [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md). App-layer patterns: [PATTERNS.md](PATTERNS.md).
 

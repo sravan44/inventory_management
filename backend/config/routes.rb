@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # Platform admin (Motor Admin, ADR-0015): mounted at /admin, HTTP-Basic-gated in
+  # config/initializers/motor.rb. (RailsAdmin was attempted and deferred, ADR-0014.)
+  mount Motor::Admin => "/admin"
+
   # API docs (ADR-0012): Swagger UI at /api-docs, OpenAPI file under the same path.
   mount Rswag::Ui::Engine => "/api-docs"
   mount Rswag::Api::Engine => "/api-docs"
@@ -28,6 +32,13 @@ Rails.application.routes.draw do
       # Tenant-scoped (served on a tenant subdomain): full resolution + auth +
       # membership stack. First consumer of TenantBaseController (commit 2.6).
       get "context", to: "context#show"
+
+      # Management (commit 3.2): tenants on the apex host; memberships tenant-scoped.
+      resources :tenants, only: %i[create show update destroy]
+      resources :memberships, only: %i[create destroy]
+
+      # API keys (commit 3.3): tenant-scoped, admin-user managed.
+      resources :api_keys, only: %i[index create destroy]
     end
   end
 end

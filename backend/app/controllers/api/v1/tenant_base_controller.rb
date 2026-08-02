@@ -2,24 +2,18 @@
 
 module Api
   module V1
-    # Base for TENANT-SCOPED API endpoints (products, warehouses, stock, … in
-    # Milestone 4). Stacks the full request pipeline:
-    #   1. within_tenant  — resolve tenant from subdomain + switch schema (around)
-    #   2. authenticate_user! — decode the access token -> Current.user
-    #   3. require_membership! — active membership in this tenant -> Current.membership
-    #   4. verify_authorized  — fail closed: every action MUST call `authorize`
+    # Base for TENANT-SCOPED API endpoints. Pipeline:
+    #   1. within_tenant     — subdomain -> Current.tenant + switch schema (around)
+    #   2. authenticate_actor! — Bearer JWT (user+membership) OR Api-Key (ADR-0010)
+    #   3. verify_authorized — fail closed: every action MUST call `authorize`
     #
-    # The apex auth endpoints (AuthController, MeController) inherit BaseController
-    # directly and do NOT get this stack.
+    # The apex auth endpoints inherit BaseController directly and skip this stack.
     class TenantBaseController < BaseController
       include TenantResolution
-      include TenantMembership
+      include ActorAuthentication
 
-      before_action :authenticate_user!
-      before_action :require_membership!
+      before_action :authenticate_actor!
 
-      # Fail closed: if an action forgets to call `authorize`, this raises
-      # (surfacing the bug) rather than silently allowing the request.
       after_action :verify_authorized
     end
   end
